@@ -7,12 +7,18 @@ export async function PUT(req, { params }) {
   const body = await req.json();
 
   const { id } = await params;
+  const update = {
+    start: new Date(body.start),
+    end: new Date(body.end),
+  };
+
+  if (typeof body.title === "string") {
+    update.title = body.title;
+  }
+
   const updated = await Event.findByIdAndUpdate(
     id,
-    {
-      start: new Date(body.start),
-      end: new Date(body.end),
-    },
+    update,
     { new: true }
   );
 
@@ -25,4 +31,21 @@ export async function DELETE(_, { params }) {
   const { id } = await params; 
   await Event.findByIdAndDelete(id);
   return NextResponse.json({ success: true });
+}
+
+export async function GET(_, { params }) {
+  await connectToDB();
+  const { id } = await params; 
+  const event = await Event.findById(id);
+
+  if (!event) {
+    return NextResponse.json({ error: "Event not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    id: event._id.toString(),
+    title: event.title,
+    start: event.start,
+    end: event.end,
+  });
 }

@@ -1,4 +1,5 @@
-import '@styles/globals.css';
+import "@styles/globals.css";
+import Link from "next/link";
 
 export const metadata = {
   title: "Create Next App",
@@ -8,8 +9,39 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        {children}
+      <body className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100">
+        <nav className="mx-auto mt-6 flex w-[calc(100%-3rem)] max-w-5xl items-center justify-between rounded-2xl border border-slate-200 bg-white/80 px-6 py-4 shadow-sm">
+          <Link href="/" className="text-lg font-semibold text-slate-900">
+            Timexa
+          </Link>
+          <div className="flex items-center gap-3 text-sm font-medium">
+            <Link
+              href="/reserve"
+              className="rounded-full px-4 py-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              Reserve
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-full px-4 py-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="rounded-full px-4 py-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              Register
+            </Link>
+            <Link
+              href="/logout"
+              className="rounded-full bg-slate-900 px-4 py-2 text-white transition hover:bg-slate-800"
+            >
+              Logout
+            </Link>
+          </div>
+        </nav>
+        <div className="pt-6">{children}</div>
       </body>
     </html>
   );
