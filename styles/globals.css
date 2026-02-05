@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+
+.fc-highlight {
+  background-color: rgba(53, 55, 154, 0.35) !important;
+}
