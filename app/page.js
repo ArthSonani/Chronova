@@ -43,7 +43,7 @@ export default async function Home() {
   const todayLabel = formatDate(new Date());
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 px-6 py-10">
+    <main className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-100 px-6 py-10">
       <section className="mx-auto max-w-5xl">
         <div className="flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white/80 p-8 shadow-xl shadow-slate-200">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

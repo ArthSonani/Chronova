@@ -38,8 +38,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#6c757d] to-[#e9ecef]'>
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 bg-[linear-gradient(to_right,rgba(0,0,0,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.15)_1px,transparent_1px)] [background-size:60px_60px]">
+    <div className='min-h-screen bg-linear-to-br from-[#6c757d] to-[#e9ecef]'>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 bg-[linear-gradient(to_right,rgba(0,0,0,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.15)_1px,transparent_1px)] bg-size-[60px_60px]">
         <div className="w-full">
           <Image
             src="/logo.png"
@@ -98,9 +98,9 @@ export default function LoginPage() {
           </form>
 
           <div className="my-8 flex items-center">
-            <div className="flex-grow border-t border-neutral-500" />
+            <div className="grow border-t border-neutral-500" />
             <span className="px-3 text-sm text-gray-500">OR</span>
-            <div className="flex-grow border-t border-neutral-500" />
+            <div className="grow border-t border-neutral-500" />
           </div>
 
           <button

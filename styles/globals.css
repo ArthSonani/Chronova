@@ -1,6 +1,49 @@
 @import "tailwindcss";
 
 
-.fc-highlight {
-  background-color: rgba(53, 55, 154, 0.35) !important;
+html,
+body {
+  height: 100%;
 }
+
+.fc-highlight {
+  background-color: rgba(194, 191, 186, 0.716) !important;
+}
+
+.fc {
+  @apply text-sm;
+}
+
+.fc-toolbar {
+  @apply flex flex-wrap items-center justify-between gap-2;
+}
+
+@media (max-width: 640px) {
+  .fc-toolbar {
+    @apply flex-col items-start;
+  }
+
+  .fc-toolbar-title {
+    @apply text-base;
+  }
+
+  .fc-button {
+    @apply px-2 py-1 text-xs;
+  }
+}
+
+.fc-button {
+  @apply rounded-md;
+}
+
+.fc-daygrid-event {
+  @apply cursor-pointer;
+}
+
+
+@media (max-width: 640px) {
+  .fc .fc-col-header-cell-cushion {
+    gap: 2px;
+  }
+}
+

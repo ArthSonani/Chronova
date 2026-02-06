@@ -7,15 +7,18 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useEffect, useState } from "react";
 
 export default function CalendarView() {
+  const [isMobile, setIsMobile] = useState(false);
   const [events, setEvents] = useState([]);
   const [event, setEvent] = useState(null);
   const [showCard, setShowCard] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("edit");
+  const [status, setStatus] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEvent((prev) => ({ ...prev, [name]: value }));
+    setStatus("");
   };
 
   const handleCloseCard = () => {
@@ -31,6 +34,7 @@ export default function CalendarView() {
   };
 
   useEffect(() => {
+    setIsMobile(window.innerWidth < 640);
     fetchEvents();
   }, []);
 
@@ -57,6 +61,7 @@ export default function CalendarView() {
       start: toDateTimeLocal(start),
       end: toDateTimeLocal(end || start),
     });
+    setStatus("");
     setShowCard(true);
   };
 
@@ -74,6 +79,7 @@ export default function CalendarView() {
     setMode("edit");
     setShowCard(true);
     setLoading(true);
+    setStatus("");
 
     const res = await fetch(`/api/events/${info.event._def.publicId}`, {
       method: "GET",
@@ -97,30 +103,42 @@ export default function CalendarView() {
   }
 
   const handleUpdateEvent = async (id) => {
-    await fetch(`/api/events/${id}`, {
+    const res = await fetch(`/api/events/${id}`, {
       method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: event.title,
         start: event.start,
         end: event.end,
       }),
     });
-    fetchEvents();
+    if (!res.ok) {
+      setStatus("Update failed.");
+      return;
+    }
+    await fetchEvents();
     handleCloseCard();
   }
 
   const handleCreateEvent = async () => {
-    if (!event?.title) return;
-    await fetch("/api/events", {
+    if (!event?.title || !event?.start) {
+      setStatus("Title and start time are required.");
+      return;
+    }
+    const res = await fetch("/api/events", {
       method: "POST",
       body: JSON.stringify({
         title: event.title,
         start: event.start,
-        end: event.end,
+        end: event.end || event.start,
       }),
     });
+    if (!res.ok) {
+      setStatus("Creation failed.");
+      return;
+    }
 
-    fetchEvents();
+    await fetchEvents();
     handleCloseCard();
   };
 
@@ -152,6 +170,11 @@ export default function CalendarView() {
             ) : (
               event && (
                 <div className="space-y-3">
+                  {status && (
+                    <div className="rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+                      {status}
+                    </div>
+                  )}
                   <input
                     type="text"
                     name="title"
@@ -215,11 +238,42 @@ export default function CalendarView() {
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
+        locale="en-IN"
+        views={{
+          dayGridMonth: {
+            titleFormat: { year: "numeric", month: "long" }
+          },
+          timeGridWeek: {
+            titleFormat: {
+              year: "numeric",
+              month: "short",
+              day: "numeric"
+            },
+            dayHeaderFormat: {
+              weekday: "short",
+              day: "numeric"
+            }
+          },
+          timeGridDay: {
+            titleFormat: {
+              day: "numeric",
+              month: "short",
+              year: "numeric"
+            }
+          }
         }}
+        headerToolbar={isMobile
+          ? {
+              left: "title",
+              center: "dayGridMonth,timeGridWeek,timeGridDay",
+              right: "prev,next today",
+            }
+          : {
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }
+        }
         events={events}
         selectable
         editable
@@ -227,7 +281,7 @@ export default function CalendarView() {
         eventDrop={handleEventDrop}
         eventClick={handleEventClick}
         eventColor='#61615e'
-        height="60vh"
+        height="auto"
         selectBackgroundColor="#349924"
       />
 

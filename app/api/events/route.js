@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
+import user from "@models/user";
 
 export async function GET() {
   await connectToDB();
@@ -20,6 +21,7 @@ export async function POST(req) {
   await connectToDB();
   const body = await req.json();
   const event = await Event.create({
+    // userId: body.userId,
     title: body.title,
     start: new Date(body.start),
     end: new Date(body.end),
