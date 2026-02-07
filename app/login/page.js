@@ -4,10 +4,10 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -29,7 +29,7 @@ export default function LoginPage() {
     if (res?.error) {
       setError("Invalid email or password");
     } else {
-      router.push("/dashboard");
+      router.push("/");
     }
   };
 
@@ -38,19 +38,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className='min-h-screen bg-linear-to-br from-[#6c757d] to-[#e9ecef]'>
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 bg-[linear-gradient(to_right,rgba(0,0,0,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.15)_1px,transparent_1px)] bg-size-[60px_60px]">
-        <div className="w-full">
-          <Image
-            src="/logo.png"
-            width={100}
-            height={100}
-            alt="RideMate Logo"
-            className="mx-auto mb-4"
-          />
-        </div>
+    <div className='min-h-screen bg-[#c7c7c7]'>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-20">
 
         <div className="w-full max-w-lg bg-white border border-gray-200 rounded-xl shadow-xl px-12 py-8">
+          <div className="w-full">
+            <Image
+              src="/logo.png"
+              width={80}
+              height={80}
+              alt="Timexa Logo"
+              className="mx-auto mb-4"
+            />
+          </div>
           <h1 className="text-2xl font-bold text-center mb-6">
             Login to your account
           </h1>
@@ -91,7 +91,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#212529] text-white py-2 rounded-lg hover:bg-[#343a40] transition"
+              className="w-full bg-[#212529] text-white cursor-pointer py-2 rounded-lg hover:bg-[#343a40] transition"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -105,7 +105,7 @@ export default function LoginPage() {
 
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
+            className="w-full flex items-center cursor-pointer justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -119,9 +119,9 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="/register" className="font-medium underline hover:text-gray-800">
+            <Link href="/register" className="font-medium underline hover:text-gray-800">
               Register
-            </a>
+            </Link>
           </p>
         </div>
       </div>

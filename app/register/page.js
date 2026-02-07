@@ -7,16 +7,13 @@ import { signIn } from 'next-auth/react'
 import Image from 'next/image'
 
 const Register = () => {
-  
   const router = useRouter()
 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
-    phone: ''
+    password: ''
   })
-
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -73,19 +70,19 @@ const Register = () => {
   };
 
   return (
-    <div className='min-h-screen bg-linear-to-br from-[#6c757d] to-[#e9ecef]'>
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 bg-[linear-gradient(to_right,rgba(0,0,0,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.15)_1px,transparent_1px)] bg-size-[60px_60px]">
-        <div className="w-full">
-          <Image
-            src="/logo.png"
-            width={100}
-            height={100}
-            alt="RideMate Logo"
-            className="mx-auto mb-4"
-          />
-        </div>
+    <div className='min-h-screen bg-[#d6d6d6]'>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-20">
 
         <div className="w-full max-w-lg bg-white border border-gray-200 rounded-xl shadow-xl px-12 py-8 mb-12">
+          <div className="w-full">
+            <Image
+              src="/logo.png"
+              width={80}
+              height={80}
+              alt="RideMate Logo"
+              className="mx-auto mb-4"
+            />
+          </div>
           <h1 className="text-2xl font-bold text-center mb-6">
             Create your account
           </h1>
@@ -98,7 +95,7 @@ const Register = () => {
             <div className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Full Name
+                  Username
                 </label>
                 <input
                   id="name"
@@ -107,7 +104,7 @@ const Register = () => {
                   autoComplete="name"
                   required
                   className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                  placeholder="Enter your full name"
+                  placeholder="Enter your Username"
                   value={formData.name}
                   onChange={handleChange}
                 />
@@ -125,21 +122,6 @@ const Register = () => {
                   className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                   placeholder="Enter your email"
                   value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Phone Number
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                  placeholder="Enter your phone number"
-                  value={formData.phone}
                   onChange={handleChange}
                 />
               </div>
@@ -165,7 +147,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#212529] text-white py-2 rounded-lg hover:bg-[#343a40] transition"
+                className="w-full bg-[#212529] text-white cursor-pointer py-2 rounded-lg hover:bg-[#343a40] transition"
               >
                 {loading ? 'Creating account...' : 'Create account'}
               </button>
@@ -180,7 +162,7 @@ const Register = () => {
 
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-[#f8f9fa] transition"
+            className="w-full flex items-center cursor-pointer justify-center gap-2 border border-gray-300 py-2 rounded-lg hover:bg-[#f8f9fa] transition"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -194,9 +176,9 @@ const Register = () => {
 
           <p className="mt-6 text-center text-sm text-gray-600">
             sign in to your existing account?{" "}
-            <a href="/login" className="font-medium underline hover:text-gray-800">
+            <Link href="/login" className="font-medium underline hover:text-gray-800">
               Login
-            </a>
+            </Link>
           </p>
         </div>
       </div>

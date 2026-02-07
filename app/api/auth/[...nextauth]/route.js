@@ -32,7 +32,6 @@ const authOptions = NextAuth({
                 return {
                     name: user.name,
                     email: user.email,
-                    image: user.avatar || null,
                 };
             }
         }),
@@ -53,7 +52,6 @@ const authOptions = NextAuth({
                     await User.create({
                         name: user.name,
                         email: user.email,
-                        avatar: user.image,
                         provider: "google",
                     });
                 }

@@ -5,9 +5,9 @@ import User from "@/models/user";
 
 export async function POST(req) {
   try {
-    const { name, email, password, phone } = await req.json();
+    const { name, email, password } = await req.json();
 
-    if (!name || !email || !password || !phone) {
+    if (!name || !email || !password) {
       return NextResponse.json(
         { message: "All fields are required" },
         { status: 400 }
@@ -30,7 +30,6 @@ export async function POST(req) {
       name,
       email,
       password: hashedPassword,
-      phone,
       provider: "credentials",
     });
 
@@ -40,9 +39,6 @@ export async function POST(req) {
     );
 
   }catch (error) {
-
-    console.error("Registration error:", error);
-
     return NextResponse.json(
       { message: "Registration failed" },
       { status: 500 }

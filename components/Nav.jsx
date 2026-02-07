@@ -6,7 +6,7 @@ const Nav = () => {
   const { data: session } = useSession();
 
   return (
-    <nav className="mx-auto mt-6 flex w-full max-w-5xl items-center justify-between rounded-2xl border border-slate-200 bg-white/80 px-6 py-4 shadow-sm">
+    <nav className="fixed left-0 right-0 top-4 z-50 mx-auto flex w-[calc(100%-2rem)] max-w-5xl items-center justify-between rounded-2xl border border-slate-200 bg-white/80 px-6 py-4 shadow-sm backdrop-blur">
           <Link href="/" className="text-lg font-semibold text-slate-900">
             Timexa
           </Link>
