@@ -53,7 +53,14 @@ export async function POST(req) {
     ]);
     const responseText = result.response.text();
     const cleanJson = responseText.replace(/```json|```/g, "").trim();
-    const response = generateRecurringEvents(cleanJson, date, Number(weeks));
+    let rawEvents;
+    try {
+        rawEvents = JSON.parse(cleanJson);
+    } catch (err) {
+        return NextResponse.json({ error: "Invalid timetable text: cannot parse JSON" }, { status: 500 });
+    }
+    
+    const response = generateRecurringEvents(rawEvents, date, Number(weeks));
 
     await Event.insertMany(response);
     

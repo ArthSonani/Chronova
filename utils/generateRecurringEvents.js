@@ -1,10 +1,4 @@
-export function generateRecurringEvents(rawText, startDate, weeks = 1) {
-  let rawEvents;
-  try {
-    rawEvents = JSON.parse(rawText);
-  } catch (err) {
-    throw new Error("Invalid timetable text: cannot parse JSON");
-  }
+export function generateRecurringEvents(rawEvents, startDate, weeks = 1) {
 
   const DAY_INDEX = {
     Sunday: 0,
@@ -52,6 +46,8 @@ export function generateRecurringEvents(rawText, startDate, weeks = 1) {
       });
     }
   });
+
+  console.log("Generated Events:", result);
 
   return result;
 }
