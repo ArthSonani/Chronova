@@ -45,13 +45,13 @@ const ReserveVoiceCommand = () => {
             type="button"
             onClick={() => handleVoiceCommand(spokenText)}
             disabled={loading || !spokenText.trim()}
-            className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full cursor-pointer rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Processing..." : "Submit Command"}
           </button>
           {result && (
-            <pre className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700">
-              {JSON.stringify(result, null, 2)}
+            <pre className="rounded-lg border border-slate-200 bg-slate-50 pt-2 text-xs text-green-700">
+              {result.message}
             </pre>
           )}
         </div>

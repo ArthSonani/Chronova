@@ -59,8 +59,7 @@ export default function SpeechRecorder({ onText, disabled = false }) {
     return recognition;
   };
 
-  const start = (event) => {
-    event?.preventDefault?.();
+  const start = () => {
     if (disabled) return;
     setError("");
 
@@ -76,85 +75,52 @@ export default function SpeechRecorder({ onText, disabled = false }) {
     }
   };
 
-  const stop = (event) => {
-    event?.preventDefault?.();
+  const stop = () => {
     recognitionRef.current?.stop?.();
   };
 
+  const toggleRecording = () => {
+    if (isRecording) {
+      stop();
+    } else {
+      start();
+    }
+  };
+
   return (
-    <div style={{ marginBottom: 16 }}>
-      <p style={{ marginBottom: 8, fontSize: 14, color: "#374151" }}>
-        Hold to speak your schedule. 
+    <div className="space-y-3">
+      <p className="text-sm text-slate-600">
+        Hold to speak your schedule.
       </p>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: 12,
-          borderRadius: 12,
-          border: "1px solid #e5e7eb",
-          background: "#fff",
-        }}
-      >
+      <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-3">
         <button
           type="button"
-          onPointerDown={start}
-          onPointerUp={stop}
-          onPointerLeave={stop}
-          onPointerCancel={stop}
+          onClick={toggleRecording}
           disabled={disabled}
-          style={{
-            width: 48,
-            height: 48,
-            borderRadius: 999,
-            border: "none",
-            background: isRecording ? "#ef4444" : "#111827",
-            color: "#fff",
-            fontSize: 18,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: isRecording
-              ? "0 0 0 6px rgba(239,68,68,0.15)"
-              : "none",
-            transition: "all 0.2s ease",
-            cursor: disabled ? "not-allowed" : "pointer",
-          }}
-          aria-label="Hold to record"
+          className={`h-12 w-12 rounded-full text-lg text-white transition ${
+            isRecording ? "bg-red-500" : "bg-slate-900"
+          } ${disabled ? "opacity-60" : "hover:bg-slate-800"}`}
+          aria-label={isRecording ? "Stop recording" : "Start recording"}
         >
-          🎤
+          {isRecording ? "■" : "🎤"}
         </button>
 
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13, color: "#6b7280" }}>
-            {isRecording ? "Listening... release to stop" : "Press and hold to speak"}
-          </div>
-          <div
-            style={{
-              marginTop: 6,
-              height: 6,
-              borderRadius: 999,
-              background: "#e5e7eb",
-              overflow: "hidden",
-            }}
-          >
+        <div className="flex-1">
+          <p className="text-sm font-medium text-slate-700">
+            {isRecording ? "Listening... tap to stop" : "Tap to start"}
+          </p>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
             <div
-              style={{
-                height: "100%",
-                width: isRecording ? "70%" : "0%",
-                background: "#ef4444",
-                transition: "width 0.2s ease",
-              }}
+              className={`h-full rounded-full transition-all ${
+                isRecording ? "w-3/4 bg-red-500" : "w-0"
+              }`}
             />
           </div>
         </div>
       </div>
 
       {error && (
-        <div style={{ marginTop: 8, fontSize: 12, color: "#dc2626" }}>
-          {error}
-        </div>
+        <p className="text-xs font-medium text-red-600">{error}</p>
       )}
     </div>
   );

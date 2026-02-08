@@ -11,13 +11,13 @@ const Nav = () => {
       <Link href="/" className="text-xl font-semibold text-white">
         Timexa
       </Link>
-      <div className="flex items-center gap-3 text-sm font-medium">
+      <div className="flex items-center gap-1 sm:gap-3 text-sm font-medium">
 
         {!session ? (
           <>
             <Link
               href="/login"
-              className="rounded-full px-4 py-2 text-white transition hover:text-[#bdbdbd]"
+              className="rounded-full px-2 sm:px-4 py-2 text-white transition hover:text-[#bdbdbd]"
             >
               Login
             </Link>
@@ -33,7 +33,7 @@ const Nav = () => {
           <>
             <Link
               href="/reserve"
-              className="rounded-full px-4 py-2 text-white transition hover:text-[#bdbdbd]"
+              className="rounded-full px-2 sm:px-4 py-2 text-white transition hover:text-[#bdbdbd]"
             >
               Reserve Slots
             </Link>

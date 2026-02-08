@@ -1,5 +1,5 @@
-import TimetableUploader from "@/components/ImageUpload";
+import ImageUploader from "@components/ImageUploader";
 
 export default function ReserveUploadPage() {
-  return <TimetableUploader />;
+  return <ImageUploader />;
 }
