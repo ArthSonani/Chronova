@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatDate, formatTime } from "../utils/dateFormate";
 
 const ReserveManual = () => {
   const [form, setForm] = useState({ title: "", start: "", end: "" });
@@ -102,23 +103,19 @@ const ReserveManual = () => {
   };
 
   return (
-    <div className="min-h-[75vh] bg-linear-to-b from-emerald-50 via-white to-slate-100 px-4 py-10">
+    <div className="min-h-[75vh] px-4 py-10 pt-30">
       <div className="mx-auto w-full max-w-5xl">
-        <div className="grid gap-6 rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl md:grid-cols-[1.1fr_0.9fr] md:p-8">
+        <div className="grid gap-6 p-6 md:grid-cols-[1.1fr_0.9fr] md:p-8">
           <div className="space-y-4">
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-emerald-600">
               Manual reserve
             </p>
-            <h1 className="font-serif text-3xl font-semibold text-slate-900">
+            <h1 className="text-3xl font-semibold text-slate-900">
               Plan your time, slot by slot.
             </h1>
             <p className="text-sm text-slate-500">
               Pick a start and end time. We will check conflicts before saving.
             </p>
-
-            <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 px-4 py-3 text-xs text-emerald-800">
-              Tip: If the slot is busy, we will suggest the next free windows.
-            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -192,7 +189,7 @@ const ReserveManual = () => {
         </div>
 
         {suggestions.length > 0 && (
-          <div className="mx-auto mt-6 w-full max-w-5xl rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-lg">
+          <div className="mx-auto mt-6 w-full max-w-5xl p-6">
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
                 Available slots
@@ -202,15 +199,18 @@ const ReserveManual = () => {
               {suggestions.map((slot) => (
                 <div
                   key={`${slot.start}-${slot.end}`}
-                  className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-2 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
                 >
                   <span className="text-slate-700">
-                    {new Date(slot.start).toLocaleString()} — {new Date(slot.end).toLocaleString()}
+                    {formatDate(new Date(slot.start))} — {formatDate(new Date(slot.end))}
+                  </span>
+                  <span className="text-slate-500">
+                    {formatTime(new Date(slot.start))} - {formatTime(new Date(slot.end))}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleReserveSuggestion(slot)}
-                    className="rounded-full bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                    className="cursor-pointer rounded-full bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
                   >
                     Reserve
                   </button>

@@ -31,38 +31,97 @@ export async function POST(req) {
     .sort({ start: 1 })
     .lean();
 
+  const businessStartHour = 9;
+  const businessEndHour = 18;
+  const msPerDay = 24 * 60 * 60 * 1000;
+
+  const getBusinessStart = (date) => {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(businessStartHour, 0, 0, 0);
+    return startOfDay;
+  };
+
+  const getBusinessEnd = (date) => {
+    const endOfDay = new Date(date);
+    endOfDay.setHours(businessEndHour, 0, 0, 0);
+    return endOfDay;
+  };
+
+  const normalizeCursor = (date) => {
+    let cursor = new Date(date);
+    while (true) {
+      const windowStart = getBusinessStart(cursor);
+      const windowEnd = getBusinessEnd(cursor);
+
+      if (cursor < windowStart) {
+        return windowStart;
+      }
+
+      if (cursor >= windowEnd) {
+        cursor = new Date(windowStart.getTime() + msPerDay);
+        continue;
+      }
+
+      return cursor;
+    }
+  };
+
   const suggestions = [];
-  let cursor = new Date(start);
+  let cursor = normalizeCursor(start);
 
   for (const event of events) {
     const eventStart = new Date(event.start);
     const eventEnd = new Date(event.end);
 
     if (eventStart > cursor) {
-      const gap = eventStart.getTime() - cursor.getTime();
-      if (gap >= durationMs) {
-        const slotStart = new Date(cursor);
+      while (suggestions.length < 3) {
+        cursor = normalizeCursor(cursor);
+        const windowEnd = getBusinessEnd(cursor);
         const slotEnd = new Date(cursor.getTime() + durationMs);
+
+        if (slotEnd > windowEnd) {
+          cursor = new Date(windowEnd);
+          continue;
+        }
+
+        if (slotEnd > eventStart) {
+          break;
+        }
+
         suggestions.push({
-          start: slotStart.toISOString(),
+          start: new Date(cursor).toISOString(),
           end: slotEnd.toISOString(),
         });
-        break;
+
+        cursor = new Date(slotEnd);
       }
     }
 
     if (eventEnd > cursor) {
-      cursor = new Date(eventEnd);
+      cursor = normalizeCursor(eventEnd);
+    }
+
+    if (suggestions.length >= 3) {
+      break;
     }
   }
 
-  if (suggestions.length === 0) {
+  while (suggestions.length < 3) {
+    cursor = normalizeCursor(cursor);
+    const windowEnd = getBusinessEnd(cursor);
     const slotStart = new Date(cursor);
     const slotEnd = new Date(cursor.getTime() + durationMs);
+
+    if (slotEnd > windowEnd) {
+      cursor = new Date(windowEnd);
+      continue;
+    }
+
     suggestions.push({
       start: slotStart.toISOString(),
       end: slotEnd.toISOString(),
     });
+    cursor = new Date(slotEnd);
   }
 
   return NextResponse.json({ suggestions });
