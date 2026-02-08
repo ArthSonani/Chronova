@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { connectToDB } from "@/utils/database";
 import User from "@/models/user";
 
-const authOptions = NextAuth({
+export const authOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -30,6 +30,7 @@ const authOptions = NextAuth({
 
                 // Return minimal session fields
                 return {
+                    id: user._id.toString(),
                     name: user.name,
                     email: user.email,
                 };
@@ -59,8 +60,38 @@ const authOptions = NextAuth({
 
             return true;
         },
+        async jwt({ token, user, account }) {
+            if (account?.provider === "credentials" && user?.id) {
+                token.userId = user.id;
+                return token;
+            }
+
+            if (user?.email || token?.email) {
+                await connectToDB();
+                const email = user?.email || token?.email;
+                const dbUser = await User.findOne({ email });
+                if (dbUser) {
+                    token.userId = dbUser._id.toString();
+                }
+            }
+
+            return token;
+        },
+        async session({ session, token }) {
+            if (!session.user) {
+                session.user = { name: null, email: null };
+            }
+
+            if (token?.userId) {
+                session.user.id = token.userId;
+            }
+
+            return session;
+        },
     },
 
-});
+};
 
-export { authOptions as GET, authOptions as POST };
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };

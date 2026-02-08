@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Event from "@/models/event";
 import { generateRecurringVoiceEvents } from "@utils/generateRecurringVoiceEvents.js";
 
@@ -47,6 +49,13 @@ Output format:
 
 export async function POST(req) {
   try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { command } = await req.json();
 
     if (!command) {
@@ -79,7 +88,14 @@ export async function POST(req) {
 
     console.log("Parsed Command JSON:", rawEvents);
     
-    const response = generateRecurringVoiceEvents(rawEvents.events, date, Number(rawEvents.weeks));
+    const response = generateRecurringVoiceEvents(
+      rawEvents.events,
+      date,
+      Number(rawEvents.weeks)
+    ).map((event) => ({
+      ...event,
+      userId,
+    }));
 
     await Event.insertMany(response);
     

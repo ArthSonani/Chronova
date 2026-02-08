@@ -6,7 +6,8 @@ const Nav = () => {
   const { data: session } = useSession();
 
   return (
-    <nav className="fixed left-0 right-0 top-4 z-50 mx-auto flex w-[calc(100%-2rem)] max-w-5xl items-center justify-between rounded-2xl border bg-black/80 px-6 py-4 shadow-sm backdrop-blur">
+    <div className="fixed left-0 right-0 top-0 w-screen h-20 bg-white z-60">
+    <nav className="fixed left-0 right-0 top-4 z-50 mx-auto flex w-[calc(100%-2rem)] max-w-5xl items-center justify-between rounded-2xl border bg-black px-6 py-4 shadow-sm backdrop-blur">
       <Link href="/" className="text-xl font-semibold text-white">
         Timexa
       </Link>
@@ -47,6 +48,7 @@ const Nav = () => {
         )}
       </div>
     </nav>
+    </div>
   )
 }
 

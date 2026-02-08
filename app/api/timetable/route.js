@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Event from "@/models/event";
 import { generateRecurringEvents } from "@utils/generateRecurringEvents.js";
 
@@ -26,6 +28,13 @@ Output ONLY valid JSON array:
 
 export async function POST(req) {
   try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const formData = await req.formData();
 
     const file = formData.get("file");
@@ -60,7 +69,12 @@ export async function POST(req) {
         return NextResponse.json({ error: "Invalid timetable text: cannot parse JSON" }, { status: 500 });
     }
     
-    const response = generateRecurringEvents(rawEvents, date, Number(weeks));
+    const response = generateRecurringEvents(rawEvents, date, Number(weeks)).map(
+      (event) => ({
+        ...event,
+        userId,
+      })
+    );
 
     await Event.insertMany(response);
     

@@ -28,7 +28,7 @@ export default function CalendarView() {
   };
 
   const fetchEvents = async () => {
-    const res = await fetch("/api/events");
+    const res = await fetch("/api/events", { credentials: "include" });
     const data = await res.json();
     setEvents(data);
   };
@@ -65,9 +65,28 @@ export default function CalendarView() {
     setShowCard(true);
   };
 
+  const handleDateClick = (info) => {
+    if (info.view.type !== "dayGridMonth") return;
+
+    const start = new Date(info.dateStr + "T00:00:00");
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+
+    setMode("create");
+    setEvent({
+      title: "",
+      start: toDateTimeLocal(start),
+      end: toDateTimeLocal(end),
+    });
+    setStatus("");
+    setShowCard(true);
+  };
+
   const handleEventDrop = async (info) => {
     await fetch(`/api/events/${info.event._def.publicId}`, {
       method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         start: info.event.start,
         end: info.event.end,
@@ -83,6 +102,7 @@ export default function CalendarView() {
 
     const res = await fetch(`/api/events/${info.event._def.publicId}`, {
       method: "GET",
+      credentials: "include",
     });
     const data = await res.json();
     setEvent({
@@ -96,6 +116,7 @@ export default function CalendarView() {
   const handleDeleteEvent = async (id) => {
     await fetch(`/api/events/${id}`, {
           method: "DELETE",
+          credentials: "include",
         });
 
     fetchEvents();
@@ -106,6 +127,7 @@ export default function CalendarView() {
     const res = await fetch(`/api/events/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         title: event.title,
         start: event.start,
@@ -127,6 +149,8 @@ export default function CalendarView() {
     }
     const res = await fetch("/api/events", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         title: event.title,
         start: event.start,
@@ -150,7 +174,7 @@ export default function CalendarView() {
           onClick={handleCloseCard}
         >
           <div
-            className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-2xl"
+            className="relative w-full max-w-md rounded-xl bg-white m-4 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -180,7 +204,7 @@ export default function CalendarView() {
                     name="title"
                     value={event.title || ""}
                     onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                     placeholder="Event title"
                   />
 
@@ -189,7 +213,7 @@ export default function CalendarView() {
                     name="start"
                     value={event.start || ""}
                     onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                   />
 
                   <input
@@ -197,30 +221,32 @@ export default function CalendarView() {
                     name="end"
                     value={event.end || ""}
                     onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                   />
 
-                  <div className="mt-4 flex justify-end gap-3">
-                    {mode === "edit" && (
-                      <button
-                        onClick={() => handleDeleteEvent(event.id)}
-                        className="rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition"
-                      >
-                        Delete
-                      </button>
-                    )}
+                  <div className="mt-4 flex flex-col justify-center gap-3">
+              
 
                     {mode === "edit" ? (
-                      <button
-                        onClick={() => handleUpdateEvent(event.id)}
-                        className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition"
-                      >
-                        Update
-                      </button>
+                      <>
+                        <button
+                          onClick={() => handleUpdateEvent(event.id)}
+                          className="w-full rounded-md bg-[#171719] px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition"
+                        >
+                          Update
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteEvent(event.id)}
+                          className="rounded-md bg-[#d3250b] px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition"
+                        >
+                          Delete
+                        </button>
+                      </>
                     ) : (
                       <button
                         onClick={handleCreateEvent}
-                        className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition"
+                        className="w-full rounded-md bg-[#222321] px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition"
                       >
                         Create
                       </button>
@@ -237,7 +263,7 @@ export default function CalendarView() {
 
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
+        initialView="dayGridMonth"
         locale="en-IN"
         views={{
           dayGridMonth: {
@@ -265,8 +291,7 @@ export default function CalendarView() {
         headerToolbar={isMobile
           ? {
               left: "title",
-              center: "dayGridMonth,timeGridWeek,timeGridDay",
-              right: "prev,next today",
+              right: "dayGridMonth,timeGridWeek,timeGridDay prev,next today",
             }
           : {
               left: "prev,next today",
@@ -277,10 +302,14 @@ export default function CalendarView() {
         events={events}
         selectable
         editable
+        longPressDelay={500}
+        selectLongPressDelay={500}
+        eventLongPressDelay={500}
         select={handleSelect}
+        dateClick={handleDateClick}
         eventDrop={handleEventDrop}
         eventClick={handleEventClick}
-        eventColor='#61615e'
+        eventColor='#545454'
         height="auto"
         selectBackgroundColor="#349924"
       />

@@ -1,7 +1,5 @@
 import ReserveVoiceCommand from "@/components/ReserveVoiceCommand";
 
-const VoiceCommandPage = () => {
+export default function ReserveCommandPage() {
   return <ReserveVoiceCommand />;
-};
-
-export default VoiceCommandPage;
+}

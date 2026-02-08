@@ -1,8 +1,17 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
 
 export async function POST(req) {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   await connectToDB();
   const body = await req.json();
 
@@ -18,7 +27,7 @@ export async function POST(req) {
     return NextResponse.json({ error: "Invalid duration" }, { status: 400 });
   }
 
-  const events = await Event.find({ end: { $gte: start } })
+  const events = await Event.find({ userId, end: { $gte: start } })
     .sort({ start: 1 })
     .lean();
 

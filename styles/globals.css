@@ -18,7 +18,7 @@ body {
   @apply flex flex-wrap items-center justify-between gap-2;
 }
 
-@media (max-width: 640px) {
+@media (max-width1: 640px) {
   .fc-toolbar {
     @apply flex-col items-start;
   }
@@ -29,11 +29,16 @@ body {
 
   .fc-button {
     @apply px-2 py-1 text-xs;
-  }
-}
+    border: none;
+
+  }}
 
 .fc-button {
   @apply rounded-md;
+}
+
+.fc-button:focus {
+  border: none;
 }
 
 .fc-daygrid-event {
@@ -47,3 +52,38 @@ body {
   }
 }
 
+
+.fc .fc-toolbar-title {
+  font-weight: bold;
+  color: #0f172a; 
+}
+
+.fc .fc-button {
+  background: #000000;
+  border: none;
+}
+
+.fc .fc-button:hover {
+  background: #747679;
+}
+
+/* Active (selected) view button */
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background: #353535; /* your color */
+  color: #ffffff;
+  border:none;
+}
+
+/* Disabled header buttons */
+.fc .fc-button-primary:disabled {
+  background: #626976;
+  color: #ffffff;
+  border:none;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.jkn{
+  color: #545454;
+}

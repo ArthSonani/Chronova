@@ -84,7 +84,7 @@ export default function SpeechRecorder({ onText, disabled = false }) {
   return (
     <div style={{ marginBottom: 16 }}>
       <p style={{ marginBottom: 8, fontSize: 14, color: "#374151" }}>
-        Hold to talk (WhatsApp style)
+        Hold to speak your schedule. 
       </p>
       <div
         style={{

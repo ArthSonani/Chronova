@@ -1,14 +1,12 @@
 import CalendarView from "@/components/CalendarView";
-import ImageUpload from "@components/ImageUpload"
 
 export default function CalendarPage() {
 
   return (
     <>
-      <div className="px-4  sm:px-6 lg:px-20">
+      <div className="p-5 pt-30 sm:pt-50 sm:px-6 lg:px-20">
         <CalendarView />
       </div>
-      <ImageUpload />
     </>
   );
 }

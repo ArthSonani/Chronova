@@ -16,6 +16,7 @@ export default function TimetableUploader() {
 
     const res = await fetch("/api/timetable", {
       method: "POST",
+      credentials: "include",
       body: fd,
     });
 

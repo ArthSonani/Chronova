@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
-import user from "@models/user";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -14,34 +13,24 @@ export async function GET() {
   }
 
   await connectToDB();
-  const events = await Event.find({ userId });
+
+  const now = new Date();
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(startOfDay);
+  endOfDay.setDate(startOfDay.getDate() + 1);
+
+  const events = await Event.find({
+    userId,
+    start: { $lt: endOfDay },
+    end: { $gte: startOfDay },
+  }).sort({ start: 1 });
 
   return NextResponse.json(
     events.map((e) => ({
-      id: e._id.toString(),
       title: e.title,
       start: e.start,
       end: e.end,
     }))
   );
-}
-
-export async function POST(req) {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  await connectToDB();
-  const body = await req.json();
-  const event = await Event.create({
-    userId,
-    title: body.title,
-    start: new Date(body.start),
-    end: new Date(body.end),
-  });
-
-  return NextResponse.json(event);
 }
