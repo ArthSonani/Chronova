@@ -103,66 +103,60 @@ const ReserveManual = () => {
   };
 
   return (
-    <div className="min-h-[75vh] px-4 py-10 pt-30">
-      <div className="mx-auto w-full max-w-5xl">
-        <div className="grid gap-6 p-6 md:grid-cols-[1.1fr_0.9fr] md:p-8">
+    <main className="min-h-screen bg-white text-black">
+      <section className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 pb-16 pt-24 sm:pt-28">
+        <div className="grid gap-6 rounded-3xl border border-black/10 bg-white p-6 shadow-sm md:grid-cols-[1.1fr_0.9fr] md:p-8">
           <div className="space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-emerald-600">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-black/50">
               Manual reserve
             </p>
-            <h1 className="text-3xl font-semibold text-slate-900">
+            <h1 className="text-3xl font-semibold">
               Plan your time, slot by slot.
             </h1>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-black/60">
               Pick a start and end time. We will check conflicts before saving.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-slate-700">Title</label>
+              <label className="text-sm font-medium text-black/80">Title</label>
               <input
                 name="title"
                 value={form.title}
                 onChange={handleChange}
                 placeholder="Team sync"
                 required
-                className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="mt-2 w-full rounded-xl border border-black/20 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium text-slate-700">Start</label>
+                <label className="text-sm font-medium text-black/80">Start</label>
                 <input
                   type="datetime-local"
                   name="start"
                   value={form.start}
                   onChange={handleChange}
                   required
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-2 w-full rounded-xl border border-black/20 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700">End</label>
+                <label className="text-sm font-medium text-black/80">End</label>
                 <input
                   type="datetime-local"
                   name="end"
                   value={form.end}
                   onChange={handleChange}
                   required
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-2 w-full rounded-xl border border-black/20 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                 />
               </div>
             </div>
 
             {status.message && (
-              <div
-                className={`rounded-xl px-3 py-2 text-sm ${
-                  status.type === "error"
-                    ? "bg-red-50 text-red-600"
-                    : "bg-emerald-50 text-emerald-700"
-                }`}
-              >
+              <div className={`rounded-xl px-3 py-2 text-xs border border-black/10 ${status.type === "error" ? "text-red-600" : "text-green-600"}`}>
                 {status.message}
               </div>
             )}
@@ -172,7 +166,7 @@ const ReserveManual = () => {
                 type="button"
                 onClick={handleSuggest}
                 disabled={suggesting}
-                className="w-full rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full rounded-xl border border-black/30 bg-white px-4 py-2 text-sm font-semibold text-black transition hover:border-black disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {suggesting ? "Finding slots..." : "Suggest free time slots"}
               </button>
@@ -181,7 +175,7 @@ const ReserveManual = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl border border-black bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Reserving..." : "Reserve"}
             </button>
@@ -189,9 +183,9 @@ const ReserveManual = () => {
         </div>
 
         {suggestions.length > 0 && (
-          <div className="mx-auto mt-6 w-full max-w-5xl p-6">
+          <div className="mx-auto mt-6 w-full max-w-6xl">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-black/50">
                 Available slots
               </p>
             </div>
@@ -199,18 +193,18 @@ const ReserveManual = () => {
               {suggestions.map((slot) => (
                 <div
                   key={`${slot.start}-${slot.end}`}
-                  className="flex flex-col gap-2 rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-2 rounded-2xl border border-black/10 bg-black/5 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <span className="text-slate-700">
+                  <span className="text-black/80">
                     {formatDate(new Date(slot.start))} — {formatDate(new Date(slot.end))}
                   </span>
-                  <span className="text-slate-500">
+                  <span className="text-black/60">
                     {formatTime(new Date(slot.start))} - {formatTime(new Date(slot.end))}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleReserveSuggestion(slot)}
-                    className="cursor-pointer rounded-full bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                    className="cursor-pointer rounded-full border border-black/30 px-4 py-1.5 text-xs font-semibold text-black transition hover:bg-black hover:text-white"
                   >
                     Reserve
                   </button>
@@ -219,8 +213,8 @@ const ReserveManual = () => {
             </div>
           </div>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

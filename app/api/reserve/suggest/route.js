@@ -27,12 +27,13 @@ export async function POST(req) {
     return NextResponse.json({ error: "Invalid duration" }, { status: 400 });
   }
 
+  const businessStartHour = 9;
+  const businessEndHour = 18;
+  const longDuration = durationMs > 8 * 60 * 60 * 1000;
+
   const events = await Event.find({ userId, end: { $gte: start } })
     .sort({ start: 1 })
     .lean();
-
-  const businessStartHour = 9;
-  const businessEndHour = 18;
   const msPerDay = 24 * 60 * 60 * 1000;
 
   const getBusinessStart = (date) => {
@@ -52,6 +53,15 @@ export async function POST(req) {
     while (true) {
       const windowStart = getBusinessStart(cursor);
       const windowEnd = getBusinessEnd(cursor);
+
+      if (longDuration) {
+        if (cursor <= windowStart) {
+          return windowStart;
+        }
+
+        cursor = new Date(windowStart.getTime() + msPerDay);
+        continue;
+      }
 
       if (cursor < windowStart) {
         return windowStart;
@@ -79,7 +89,7 @@ export async function POST(req) {
         const windowEnd = getBusinessEnd(cursor);
         const slotEnd = new Date(cursor.getTime() + durationMs);
 
-        if (slotEnd > windowEnd) {
+        if (!longDuration && slotEnd > windowEnd) {
           cursor = new Date(windowEnd);
           continue;
         }
@@ -112,7 +122,7 @@ export async function POST(req) {
     const slotStart = new Date(cursor);
     const slotEnd = new Date(cursor.getTime() + durationMs);
 
-    if (slotEnd > windowEnd) {
+    if (!longDuration && slotEnd > windowEnd) {
       cursor = new Date(windowEnd);
       continue;
     }

@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
 import { generateRecurringVoiceEvents } from "@utils/generateRecurringVoiceEvents.js";
 
@@ -88,6 +89,8 @@ export async function POST(req) {
 
     console.log("Parsed Command JSON:", rawEvents);
     
+    await connectToDB();
+
     const response = generateRecurringVoiceEvents(
       rawEvents.events,
       date,
@@ -97,10 +100,39 @@ export async function POST(req) {
       userId,
     }));
 
+    const conflicts = [];
+    for (const event of response) {
+      const conflict = await Event.findOne({
+        userId,
+        start: { $lt: new Date(event.end) },
+        end: { $gt: new Date(event.start) },
+      })
+        .select("_id title start end")
+        .lean();
+
+      if (conflict) {
+        conflicts.push({
+          requested: {
+            title: event.title,
+            start: event.start,
+            end: event.end,
+          },
+          conflict,
+        });
+      }
+    }
+
+    if (conflicts.length > 0) {
+      return NextResponse.json(
+        { error: "already occupied", conflicts },
+        { status: 409 }
+      );
+    }
+
     await Event.insertMany(response);
     
     return NextResponse.json({
-        message: `${response.length} Events are created successfully`,
+      message: `${response.length} Events are created successfully`,
     });
 
   } catch (error) {

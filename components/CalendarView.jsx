@@ -167,35 +167,105 @@ export default function CalendarView() {
   };
 
   return (
-    <>
+    <main className="min-h-screen bg-white text-black">
+      <section className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 pb-16 pt-30">
+        <div className="flex flex-col gap-2 px-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-black/60">
+            Calendar
+          </p>
+          <h1 className="text-3xl font-semibold sm:text-4xl">
+            Your schedule at a glance
+          </h1>
+          <p className="text-sm text-black/70 sm:text-base">
+            Click to create events or drag to adjust timings.
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-black/20 bg-white p-3 shadow-sm sm:p-5">
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            locale="en-IN"
+            views={{
+              dayGridMonth: {
+                titleFormat: { year: "numeric", month: "long" },
+              },
+              timeGridWeek: {
+                titleFormat: {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                },
+                dayHeaderFormat: {
+                  weekday: "short",
+                  day: "numeric",
+                },
+              },
+              timeGridDay: {
+                titleFormat: {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                },
+              },
+            }}
+            headerToolbar={
+              isMobile
+                ? {
+                    left: "title",
+                    right: "dayGridMonth,timeGridWeek,timeGridDay prev,next today",
+                  }
+                : {
+                    left: "prev,next today",
+                    center: "title",
+                    right: "dayGridMonth,timeGridWeek,timeGridDay",
+                  }
+            }
+            events={events}
+            selectable
+            editable
+            longPressDelay={500}
+            selectLongPressDelay={500}
+            eventLongPressDelay={500}
+            select={handleSelect}
+            dateClick={handleDateClick}
+            eventDrop={handleEventDrop}
+            eventClick={handleEventClick}
+            eventColor="#545454"
+            height="auto"
+            selectBackgroundColor="#349924"
+          />
+        </div>
+      </section>
+
       {showCard && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
           onClick={handleCloseCard}
         >
           <div
-            className="relative w-full max-w-md rounded-xl bg-white m-4 p-6 shadow-2xl"
+            className="relative m-4 w-full max-w-md rounded-2xl border border-black/20 bg-white p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={handleCloseCard}
-              className="absolute right-3 top-3 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
+              className="absolute right-4 top-4 rounded-md border border-black/20 px-2 py-1 text-xs font-semibold text-black/60 transition hover:border-black hover:text-black"
               aria-label="Close"
             >
-              ✕
+              Close
             </button>
 
-            <h2 className="mb-4 text-lg font-semibold text-gray-800">
-              {mode === "create" ? "Create Event" : "Event Info"}
+            <h2 className="mb-4 text-lg font-semibold text-black">
+              {mode === "create" ? "Create event" : "Event info"}
             </h2>
 
             {loading ? (
-              <p className="text-sm text-gray-500">Loading...</p>
+              <p className="text-sm text-black/60">Loading...</p>
             ) : (
               event && (
                 <div className="space-y-3">
                   {status && (
-                    <div className="rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+                    <div className="rounded-md border border-black/20 bg-black/5 px-3 py-2 text-xs font-medium text-black">
                       {status}
                     </div>
                   )}
@@ -204,7 +274,7 @@ export default function CalendarView() {
                     name="title"
                     value={event.title || ""}
                     onChange={handleInputChange}
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    className="mt-1 w-full rounded-lg border border-black/20 px-4 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                     placeholder="Event title"
                   />
 
@@ -213,7 +283,7 @@ export default function CalendarView() {
                     name="start"
                     value={event.start || ""}
                     onChange={handleInputChange}
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    className="mt-1 w-full rounded-lg border border-black/20 px-4 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                   />
 
                   <input
@@ -221,24 +291,22 @@ export default function CalendarView() {
                     name="end"
                     value={event.end || ""}
                     onChange={handleInputChange}
-                    className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    className="mt-1 w-full rounded-lg border border-black/20 px-4 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                   />
 
-                  <div className="mt-4 flex flex-col justify-center gap-3">
-              
-
+                  <div className="mt-4 flex flex-col gap-3">
                     {mode === "edit" ? (
                       <>
                         <button
                           onClick={() => handleUpdateEvent(event.id)}
-                          className="w-full rounded-md bg-[#171719] px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition"
+                          className="w-full rounded-md border border-black bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-white hover:text-black"
                         >
                           Update
                         </button>
 
                         <button
                           onClick={() => handleDeleteEvent(event.id)}
-                          className="rounded-md bg-[#d3250b] px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition"
+                          className="w-full rounded-md border border-black/30 px-4 py-2 text-sm font-medium text-black transition hover:border-black"
                         >
                           Delete
                         </button>
@@ -246,7 +314,7 @@ export default function CalendarView() {
                     ) : (
                       <button
                         onClick={handleCreateEvent}
-                        className="w-full rounded-md bg-[#222321] px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition"
+                        className="w-full rounded-md border border-black bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-white hover:text-black"
                       >
                         Create
                       </button>
@@ -258,62 +326,6 @@ export default function CalendarView() {
           </div>
         </div>
       )}
-
-
-
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        locale="en-IN"
-        views={{
-          dayGridMonth: {
-            titleFormat: { year: "numeric", month: "long" }
-          },
-          timeGridWeek: {
-            titleFormat: {
-              year: "numeric",
-              month: "short",
-              day: "numeric"
-            },
-            dayHeaderFormat: {
-              weekday: "short",
-              day: "numeric"
-            }
-          },
-          timeGridDay: {
-            titleFormat: {
-              day: "numeric",
-              month: "short",
-              year: "numeric"
-            }
-          }
-        }}
-        headerToolbar={isMobile
-          ? {
-              left: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay prev,next today",
-            }
-          : {
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay",
-            }
-        }
-        events={events}
-        selectable
-        editable
-        longPressDelay={500}
-        selectLongPressDelay={500}
-        eventLongPressDelay={500}
-        select={handleSelect}
-        dateClick={handleDateClick}
-        eventDrop={handleEventDrop}
-        eventClick={handleEventClick}
-        eventColor='#545454'
-        height="auto"
-        selectBackgroundColor="#349924"
-      />
-
-  </>
+    </main>
   );
 }

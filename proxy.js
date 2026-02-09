@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const PUBLIC_PATHS = ["/login", "/register", "/api/auth", "/api/register"];
+const PUBLIC_PATHS = [ "/login", "/register", "/api/auth", "/api/register"];
 
 export async function proxy(req) {
   const { pathname } = req.nextUrl;
@@ -26,6 +26,6 @@ export async function proxy(req) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|logo.png|sitemap.xml|robots.txt).*)",
+    "/((?!_next/static|_next/image|favicon.ico|logo.png|sitemap.xml|robots.txt|.*\\.(?:png|jpg|jpeg|svg|webp)).*)",
   ],
 };

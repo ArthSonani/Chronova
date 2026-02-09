@@ -70,15 +70,15 @@ const Register = () => {
   };
 
   return (
-    <div className='min-h-screen bg-[#d6d6d6]'>
+    <div className='min-h-screen bg-white'>
       <div className="min-h-screen flex flex-col items-center justify-center px-4 pt-20">
 
-        <div className="w-full max-w-lg bg-white border border-gray-200 rounded-xl shadow-xl px-8 sm:px-12 py-8 mb-12 mt-12">
+        <div className="w-full max-w-lg bg-white border border-gray-300 rounded-3xl shadow-xl px-8 sm:px-12 py-8 mb-12 mt-12">
           <div className="w-full">
             <Image
               src="/logo.png"
-              width={65}
-              height={65}
+              width={60}
+              height={60}
               alt="RideMate Logo"
               className="mx-auto mb-4"
             />
