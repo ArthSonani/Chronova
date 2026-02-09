@@ -3,10 +3,21 @@ import Provider from '@components/Provider'
 import Nav from '@components/Nav'
 
 export const metadata = {
-  title: 'Timexa',
+  title: 'Chronova',
   description: 'Smart Time Management & Scheduling System',
   icons: {
-    icon: '/logo.png',
+    other: [
+      {
+        rel: "icon",
+        url: "/tab_logo.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        rel: "icon",
+        url: "/logo.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
   },
 }
 
