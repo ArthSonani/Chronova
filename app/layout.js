@@ -6,18 +6,7 @@ export const metadata = {
   title: 'Chronova',
   description: 'Smart Time Management & Scheduling System',
   icons: {
-    other: [
-      {
-        rel: "icon",
-        url: "/tab_logo.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        rel: "icon",
-        url: "/logo.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-    ],
+    icon: '/tab_logo.png',
   },
 }
 
