@@ -15,6 +15,7 @@
     "@fullcalendar/timegrid": "^6.1.20",
     "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^3.0.3",
+    "mongodb": "^7.1.0",
     "mongoose": "^9.1.6",
     "next": "16.1.6",
     "next-auth": "^4.24.13",
