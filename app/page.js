@@ -77,7 +77,7 @@ export default function Home() {
           <div className="grid gap-6">
             <div className="rounded-3xl border border-dashed border-black/30 bg-white p-6 lg:hidden">
               <p className="text-xs uppercase tracking-[0.25em] text-black/50">
-                Image slot
+                Calendar
               </p>
               <div className="mt-6 flex min-h-55 items-center justify-center bg-black/5">
                 <img
@@ -137,7 +137,7 @@ export default function Home() {
 
             <div className="rounded-3xl border border-dashed border-black/30 bg-white p-6 lg:hidden">
               <p className="text-xs uppercase tracking-[0.25em] text-black/50">
-                Image slot
+                Reserve Smartly
               </p>
               <div className="mt-6 flex min-h-55 items-center justify-center rounded-2xl border border-black/10 bg-black/5">
                 <img
@@ -153,7 +153,7 @@ export default function Home() {
           <div className="hidden flex-col gap-6 lg:flex">
             <div className="rounded-3xl border border-dashed border-black/30 bg-white p-6">
               <p className="text-xs uppercase tracking-[0.25em] text-black/50">
-                Image slot
+                Calendar
               </p>
               <div className="mt-6 flex min-h-55 items-center justify-center bg-black/5">
                 <img
@@ -166,7 +166,7 @@ export default function Home() {
             </div>
             <div className="rounded-3xl border border-dashed border-black/30 bg-white p-6">
               <p className="text-xs uppercase tracking-[0.25em] text-black/50">
-                Image slot
+                Reserve Smartly
               </p>
               <div className="mt-6 flex min-h-55 items-center justify-center rounded-2xl border border-black/10 bg-black/5">
                 <img
