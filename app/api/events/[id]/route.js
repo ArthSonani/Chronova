@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
+import { parseDateTime } from "@/utils/timezone";
 
 export async function PUT(req, { params }) {
   const session = await getServerSession(authOptions);
@@ -14,12 +15,18 @@ export async function PUT(req, { params }) {
 
   await connectToDB();
   const body = await req.json();
+  const start = parseDateTime(body.start, body.timezoneOffset);
+  const end = parseDateTime(body.end, body.timezoneOffset);
 
   const { id } = await params;
   const update = {
-    start: new Date(body.start),
-    end: new Date(body.end),
+    start,
+    end,
   };
+
+  if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
 
   if (typeof body.title === "string") {
     update.title = body.title;

@@ -22,6 +22,10 @@ const ReserveManual = () => {
     setStatus({ type: "", message: "" });
     setLoading(true);
 
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const startIso = form.start ? new Date(form.start).toISOString() : "";
+    const endIso = form.end ? new Date(form.end).toISOString() : "";
+
     try {
       const res = await fetch("/api/reserve", {
         method: "POST",
@@ -29,8 +33,9 @@ const ReserveManual = () => {
         credentials: "include",
         body: JSON.stringify({
           title: form.title,
-          start: form.start,
-          end: form.end,
+          start: startIso,
+          end: endIso,
+          timezoneOffset,
         }),
       });
 
@@ -53,12 +58,15 @@ const ReserveManual = () => {
   const handleSuggest = async () => {
     if (!form.start || !form.end) return;
     setSuggesting(true);
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const startIso = new Date(form.start).toISOString();
+    const endIso = new Date(form.end).toISOString();
     try {
       const res = await fetch("/api/reserve/suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ start: form.start, end: form.end }),
+        body: JSON.stringify({ start: startIso, end: endIso, timezoneOffset }),
       });
       const data = await res.json();
       if (!res.ok) {

@@ -1,4 +1,16 @@
-export function generateRecurringVoiceEvents(rawEvents, referenceDate, weeks = 1) {
+import {
+  addLocalMinutes,
+  getLocalDayIndex,
+  parseDateTime,
+  startOfLocalDayUtc,
+} from "./timezone";
+
+export function generateRecurringVoiceEvents(
+  rawEvents,
+  referenceDate,
+  weeks = 1,
+  timezoneOffsetMinutes
+) {
   const DAY_INDEX = {
     Sunday: 0,
     Monday: 1,
@@ -9,8 +21,11 @@ export function generateRecurringVoiceEvents(rawEvents, referenceDate, weeks = 1
     Saturday: 6,
   };
 
-  const baseDate = new Date(referenceDate);
-  baseDate.setHours(0, 0, 0, 0);
+  const parsedReference = parseDateTime(referenceDate, timezoneOffsetMinutes);
+  const baseDate = startOfLocalDayUtc(
+    parsedReference,
+    timezoneOffsetMinutes
+  );
 
   const result = [];
 
@@ -22,8 +37,8 @@ export function generateRecurringVoiceEvents(rawEvents, referenceDate, weeks = 1
      * (voice command like "tomorrow", "on 5th September")
      */
     if (ev.date) {
-      firstEventDate = new Date(ev.date);
-      firstEventDate.setHours(0, 0, 0, 0);
+      const parsedDate = parseDateTime(ev.date, timezoneOffsetMinutes);
+      firstEventDate = startOfLocalDayUtc(parsedDate, timezoneOffsetMinutes);
     }
 
     /**
@@ -31,12 +46,12 @@ export function generateRecurringVoiceEvents(rawEvents, referenceDate, weeks = 1
      */
     else if (ev.day) {
       const targetDay = DAY_INDEX[ev.day];
+      const baseDay = getLocalDayIndex(baseDate, timezoneOffsetMinutes);
 
-      let diff = targetDay - baseDate.getDay();
+      let diff = targetDay - baseDay;
       if (diff < 0) diff += 7; // move forward only
 
-      firstEventDate = new Date(baseDate);
-      firstEventDate.setDate(baseDate.getDate() + diff);
+      firstEventDate = new Date(baseDate.getTime() + diff * 86400000);
     }
 
     if (!firstEventDate) return;
@@ -48,14 +63,10 @@ export function generateRecurringVoiceEvents(rawEvents, referenceDate, weeks = 1
      * 3️⃣ Generate recurring weekly events
      */
     for (let w = 0; w < weeks; w++) {
-      const eventDate = new Date(firstEventDate);
-      eventDate.setDate(eventDate.getDate() + w * 7);
+      const eventDate = new Date(firstEventDate.getTime() + w * 7 * 86400000);
 
-      const start = new Date(eventDate);
-      start.setHours(sh, sm, 0, 0);
-
-      const end = new Date(eventDate);
-      end.setHours(eh, em, 0, 0);
+      const start = addLocalMinutes(eventDate, sh * 60 + sm);
+      const end = addLocalMinutes(eventDate, eh * 60 + em);
 
       result.push({
         title: ev.title || "Class",

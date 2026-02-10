@@ -13,6 +13,7 @@ export default function ImageUploader() {
     fd.append("file", formData.file);
     fd.append("date", formData.date);
     fd.append("weeks", formData.weeks);
+    fd.append("timezoneOffset", new Date().getTimezoneOffset());
 
     const res = await fetch("/api/upload", {
       method: "POST",

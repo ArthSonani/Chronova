@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Event from "@/models/event";
 import { generateRecurringEvents } from "@utils/generateRecurringEvents.js";
+import { parseDateTime } from "@/utils/timezone";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const PROMPT = `
@@ -40,6 +41,7 @@ export async function POST(req) {
     const file = formData.get("file");
     const date = formData.get("date");
     const weeks = formData.get("weeks");
+    const timezoneOffset = formData.get("timezoneOffset");
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -69,7 +71,17 @@ export async function POST(req) {
         return NextResponse.json({ error: "Invalid timetable text: cannot parse JSON" }, { status: 500 });
     }
     
-    const response = generateRecurringEvents(rawEvents, date, Number(weeks)).map(
+    const parsedStart = parseDateTime(date, timezoneOffset);
+    if (!parsedStart || Number.isNaN(parsedStart.getTime())) {
+      return NextResponse.json({ error: "Invalid start date" }, { status: 400 });
+    }
+
+    const response = generateRecurringEvents(
+      rawEvents,
+      parsedStart,
+      Number(weeks),
+      timezoneOffset
+    ).map(
       (event) => ({
         ...event,
         userId,

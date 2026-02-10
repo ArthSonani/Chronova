@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
+import { addLocalMinutes, parseDateTime, startOfLocalDayUtc } from "@/utils/timezone";
 
 export async function POST(req) {
   const session = await getServerSession(authOptions);
@@ -15,10 +16,10 @@ export async function POST(req) {
   await connectToDB();
   const body = await req.json();
 
-  const start = new Date(body.start);
-  const end = new Date(body.end);
+  const start = parseDateTime(body.start, body.timezoneOffset);
+  const end = parseDateTime(body.end, body.timezoneOffset);
 
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+  if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 
@@ -37,15 +38,13 @@ export async function POST(req) {
   const msPerDay = 24 * 60 * 60 * 1000;
 
   const getBusinessStart = (date) => {
-    const startOfDay = new Date(date);
-    startOfDay.setHours(businessStartHour, 0, 0, 0);
-    return startOfDay;
+    const startOfDay = startOfLocalDayUtc(date, body.timezoneOffset);
+    return addLocalMinutes(startOfDay, businessStartHour * 60);
   };
 
   const getBusinessEnd = (date) => {
-    const endOfDay = new Date(date);
-    endOfDay.setHours(businessEndHour, 0, 0, 0);
-    return endOfDay;
+    const startOfDay = startOfLocalDayUtc(date, body.timezoneOffset);
+    return addLocalMinutes(startOfDay, businessEndHour * 60);
   };
 
   const normalizeCursor = (date) => {

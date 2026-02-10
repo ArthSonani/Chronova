@@ -1,4 +1,16 @@
-export function generateRecurringEvents(rawEvents, startDate, weeks = 1) {
+import {
+  addLocalMinutes,
+  getLocalDayIndex,
+  parseDateTime,
+  startOfLocalDayUtc,
+} from "./timezone";
+
+export function generateRecurringEvents(
+  rawEvents,
+  startDate,
+  weeks = 1,
+  timezoneOffsetMinutes
+) {
 
   const DAY_INDEX = {
     Sunday: 0,
@@ -10,8 +22,8 @@ export function generateRecurringEvents(rawEvents, startDate, weeks = 1) {
     Saturday: 6,
   };
 
-  const baseDate = new Date(startDate);
-  baseDate.setHours(0, 0, 0, 0);
+  const parsedStart = parseDateTime(startDate, timezoneOffsetMinutes);
+  const baseDate = startOfLocalDayUtc(parsedStart, timezoneOffsetMinutes);
 
   const result = [];
 
@@ -20,24 +32,20 @@ export function generateRecurringEvents(rawEvents, startDate, weeks = 1) {
     const targetDay = DAY_INDEX[ev.day];
 
     // ✅ Always move forward to NEXT occurrence
-    let diff = (targetDay - baseDate.getDay() + 7) % 7;
+    const baseDay = getLocalDayIndex(baseDate, timezoneOffsetMinutes);
+    let diff = (targetDay - baseDay + 7) % 7;
     if (diff === 0) diff = 7; // move to next week, not today
 
-    const firstEventDate = new Date(baseDate);
-    firstEventDate.setDate(firstEventDate.getDate() + diff);
+    const firstEventDate = new Date(baseDate.getTime() + diff * 86400000);
 
     const [sh, sm] = ev.start.split(":").map(Number);
     const [eh, em] = ev.end.split(":").map(Number);
 
     for (let w = 0; w < weeks; w++) {
-      const eventDate = new Date(firstEventDate);
-      eventDate.setDate(eventDate.getDate() + w * 7);
+      const eventDate = new Date(firstEventDate.getTime() + w * 7 * 86400000);
 
-      const start = new Date(eventDate);
-      start.setHours(sh, sm, 0, 0);
-
-      const end = new Date(eventDate);
-      end.setHours(eh, em, 0, 0);
+      const start = addLocalMinutes(eventDate, sh * 60 + sm);
+      const end = addLocalMinutes(eventDate, eh * 60 + em);
 
       result.push({
         title: ev.title,

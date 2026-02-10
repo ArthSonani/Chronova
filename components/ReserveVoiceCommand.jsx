@@ -19,7 +19,10 @@ const ReserveVoiceCommand = () => {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ command }),
+      body: JSON.stringify({
+        command,
+        timezoneOffset: new Date().getTimezoneOffset(),
+      }),
     });
     const res = await response.json();
     if (!response.ok) {

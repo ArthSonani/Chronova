@@ -83,6 +83,7 @@ export default function CalendarView() {
   };
 
   const handleEventDrop = async (info) => {
+    const timezoneOffset = new Date().getTimezoneOffset();
     await fetch(`/api/events/${info.event._def.publicId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -90,6 +91,7 @@ export default function CalendarView() {
       body: JSON.stringify({
         start: info.event.start,
         end: info.event.end,
+        timezoneOffset,
       }),
     });
   };
@@ -124,14 +126,18 @@ export default function CalendarView() {
   }
 
   const handleUpdateEvent = async (id) => {
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const startIso = event?.start ? new Date(event.start).toISOString() : null;
+    const endIso = event?.end ? new Date(event.end).toISOString() : null;
     const res = await fetch(`/api/events/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
         title: event.title,
-        start: event.start,
-        end: event.end,
+        start: startIso,
+        end: endIso,
+        timezoneOffset,
       }),
     });
     if (!res.ok) {
@@ -147,14 +153,18 @@ export default function CalendarView() {
       setStatus("Title and start time are required.");
       return;
     }
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const startIso = new Date(event.start).toISOString();
+    const endIso = new Date(event.end || event.start).toISOString();
     const res = await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
         title: event.title,
-        start: event.start,
-        end: event.end || event.start,
+        start: startIso,
+        end: endIso,
+        timezoneOffset,
       }),
     });
     if (!res.ok) {

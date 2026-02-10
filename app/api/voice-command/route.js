@@ -5,6 +5,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
 import { generateRecurringVoiceEvents } from "@utils/generateRecurringVoiceEvents.js";
+import { parseDateTime } from "@/utils/timezone";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const PROMPT = `
@@ -57,7 +58,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { command } = await req.json();
+    const { command, timezoneOffset } = await req.json();
 
     if (!command) {
       return NextResponse.json({ error: "No command provided" }, { status: 400 });
@@ -85,7 +86,7 @@ export async function POST(req) {
     } catch (err) {
         return NextResponse.json({ error: "Invalid timetable text: cannot parse JSON" }, { status: 500 });
     }
-    const date = new Date();
+    const date = parseDateTime(new Date().toISOString(), timezoneOffset);
 
     console.log("Parsed Command JSON:", rawEvents);
     
@@ -94,7 +95,8 @@ export async function POST(req) {
     const response = generateRecurringVoiceEvents(
       rawEvents.events,
       date,
-      Number(rawEvents.weeks)
+      Number(rawEvents.weeks),
+      timezoneOffset
     ).map((event) => ({
       ...event,
       userId,
