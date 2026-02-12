@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
-import { generateRecurringVoiceEvents } from "@utils/generateRecurringVoiceEvents.js";
+import { generateRecurringEvents } from "@utils/generateRecurringEvents.js";
 import { parseDateTime } from "@/utils/timezone";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -92,7 +92,7 @@ export async function POST(req) {
     
     await connectToDB();
 
-    const response = generateRecurringVoiceEvents(
+    const response = generateRecurringEvents(
       rawEvents.events,
       date,
       Number(rawEvents.weeks),

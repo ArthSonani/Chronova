@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatDate, formatTime } from "../utils/dateFormate";
+import { formatDate, formatTime } from "@/utils/dateFormate";
 
 const ReserveManual = () => {
   const [form, setForm] = useState({ title: "", start: "", end: "" });
