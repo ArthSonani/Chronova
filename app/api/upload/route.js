@@ -5,6 +5,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Event from "@/models/event";
 import { generateRecurringEvents } from "@utils/generateRecurringEvents.js";
 import { parseDateTime } from "@/utils/timezone";
+import { isValidEventRange } from "@/utils/validateEvent";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const PROMPT = `
@@ -88,10 +89,21 @@ export async function POST(req) {
       })
     );
 
-    await Event.insertMany(response);
+    const validEvents = response.filter((event) =>
+      isValidEventRange(event.start, event.end)
+    );
+
+    if (validEvents.length === 0) {
+      return NextResponse.json(
+        { error: "No valid events found." },
+        { status: 400 }
+      );
+    }
+
+    await Event.insertMany(validEvents);
     
     return NextResponse.json({
-        message: `${response.length} Events are created successfully`,
+        message: `${validEvents.length} Events are created successfully`,
     });
 
   } catch (error) {

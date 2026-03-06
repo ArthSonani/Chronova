@@ -4,6 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectToDB } from "@/utils/database";
 import Event from "@/models/event";
 import { parseDateTime } from "@/utils/timezone";
+import { isValidEventRange } from "@/utils/validateEvent";
 
 export async function PUT(req, { params }) {
   const session = await getServerSession(authOptions);
@@ -26,6 +27,13 @@ export async function PUT(req, { params }) {
 
   if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+
+  if (!isValidEventRange(start, end)) {
+    return NextResponse.json(
+      { error: "Invalid date range" },
+      { status: 400 }
+    );
   }
 
   if (typeof body.title === "string") {

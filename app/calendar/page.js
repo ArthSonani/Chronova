@@ -287,7 +287,7 @@ export default function Calendar() {
               event && (
                 <div className="space-y-3">
                   {status && (
-                    <div className="rounded-md border border-black/20 bg-black/5 px-3 py-2 text-xs font-medium text-black">
+                    <div className="p-1 text-xs font-medium text-red-500">
                       {status}
                     </div>
                   )}
