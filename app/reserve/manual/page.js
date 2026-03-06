@@ -23,8 +23,29 @@ const ReserveManual = () => {
     setLoading(true);
 
     const timezoneOffset = new Date().getTimezoneOffset();
-    const startIso = form.start ? new Date(form.start).toISOString() : "";
-    const endIso = form.end ? new Date(form.end).toISOString() : "";
+    const startDate = form.start ? new Date(form.start) : null;
+    const endDate = form.end ? new Date(form.end) : null;
+
+    if (!startDate || !endDate || Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      setStatus({ type: "error", message: "Please enter valid dates." });
+      setLoading(false);
+      return;
+    }
+
+    if (startDate > endDate) {
+      setStatus({ type: "error", message: "Start date must be before end date." });
+      setLoading(false);
+      return;
+    }
+
+    if (endDate.getTime() - startDate.getTime() < 30 * 60 * 1000) {
+      setStatus({ type: "error", message: "Reservation must be at least 30 minutes." });
+      setLoading(false);
+      return;
+    }
+
+    const startIso = startDate.toISOString();
+    const endIso = endDate.toISOString();
 
     try {
       const res = await fetch("/api/reserve", {
@@ -57,10 +78,24 @@ const ReserveManual = () => {
 
   const handleSuggest = async () => {
     if (!form.start || !form.end) return;
+    const startDate = new Date(form.start);
+    const endDate = new Date(form.end);
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      setStatus({ type: "error", message: "Please enter valid dates." });
+      return;
+    }
+    if (startDate > endDate) {
+      setStatus({ type: "error", message: "Start date must be before end date." });
+      return;
+    }
+    if (endDate.getTime() - startDate.getTime() < 30 * 60 * 1000) {
+      setStatus({ type: "error", message: "Reservation must be at least 30 minutes." });
+      return;
+    }
     setSuggesting(true);
     const timezoneOffset = new Date().getTimezoneOffset();
-    const startIso = new Date(form.start).toISOString();
-    const endIso = new Date(form.end).toISOString();
+    const startIso = startDate.toISOString();
+    const endIso = endDate.toISOString();
     try {
       const res = await fetch("/api/reserve/suggest", {
         method: "POST",

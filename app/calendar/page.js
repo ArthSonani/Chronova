@@ -259,10 +259,22 @@ export default function Calendar() {
           >
             <button
               onClick={handleCloseCard}
-              className="absolute right-4 top-4 rounded-md border border-black/20 px-2 py-1 text-xs font-semibold text-black/60 transition hover:border-black hover:text-black"
+              className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-full border border-black/20 text-black/60 transition hover:border-black hover:text-black"
               aria-label="Close"
             >
-              Close
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
             </button>
 
             <h2 className="mb-4 text-lg font-semibold text-black">
